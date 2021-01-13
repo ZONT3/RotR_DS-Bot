@@ -34,7 +34,7 @@ public class Do extends CommandAdapter {
         String utf = "";
         if (Commons.isWindows()) utf = "-X utf8";
         Commands.call(Exec.class,
-                String.format("-V \"--name=%s\" python3 %s -u %s", name, utf, resolveScript(name) + input.stripPrefixOpts().replaceFirst(name, "")),
+                String.format("-V \"--name=%s\" " + Exec.PYTHON + " %s %s", name, utf, resolveScript(name) + input.stripPrefixOpts().replaceFirst(name, "")),
                 event, getBot());
     }
 

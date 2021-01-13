@@ -23,6 +23,12 @@ import java.util.regex.Pattern;
 import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class Exec extends CommandAdapter implements ExternalCallable {
+    static {
+        if (Commons.isWindows()) PYTHON = "python";
+        else PYTHON = "python3.9";
+    }
+    public static final String PYTHON;
+
     private static long nextPid = 1;
     private static final Map<Long, ExecHandler> processes = Collections.synchronizedMap(new HashMap<>());
 
@@ -65,7 +71,7 @@ public class Exec extends CommandAdapter implements ExternalCallable {
                     tempFile = toTemp(code);
                     String utf = "";
                     if (Commons.isWindows()) utf = "-X utf8";
-                    lineToExec = String.format("python3 %s %s\"%s\"",
+                    lineToExec = String.format("python3.9 %s %s\"%s\"",
                             utf,
                             buff ? "" : "-u ",
                             tempFile.getAbsolutePath());
