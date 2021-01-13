@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.zont'
+version '1.1'
+
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$projectDir/src/main/resources/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['version'] = project.version.toString()
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation 'net.dv8tion:JDA:4.2.0_209'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.reflections:reflections:0.9.11'
+    implementation 'net.usrlib:material-color:0.1'
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
+
+    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+    compile group: 'commons-io', name: 'commons-io', version: '2.8.0'
+    compile project(':core')
+}
+
+test {
+    useJUnitPlatform()
+}
