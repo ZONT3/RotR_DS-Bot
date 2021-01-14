@@ -8,10 +8,12 @@ import ru.zont.dsbot.core.commands.NotImplementedException;
 import ru.zont.uinondsb.tools.Commons;
 import ru.zont.uinondsb.tools.TRoles;
 
-import javax.management.relation.Role;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
-import static ru.zont.dsbot.core.commands.Commands.*;
+import static ru.zont.dsbot.core.commands.Commands.Input;
 import static ru.zont.dsbot.core.commands.Commands.parseInput;
 import static ru.zont.dsbot.core.tools.Strings.STR;
 

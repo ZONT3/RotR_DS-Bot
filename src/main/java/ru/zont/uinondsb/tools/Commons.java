@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import ru.zont.dsbot.core.commands.CommandAdapter;
 import ru.zont.dsbot.core.commands.Commands;
+import ru.zont.dsbot.core.tools.Configs;
 import ru.zont.dsbot.core.tools.Tools;
 
 import java.util.List;
@@ -61,4 +62,13 @@ public class Commons {
                 .addCase(rm, "rm", "del")
                 .addCase(get, "get", "list");
     }
+
+    public static String getRoleGmID() {
+        return Configs.getID("role_gm");
+    }
+
+    public static String getChannelStatusID() {
+        return Configs.getID("channel_status");
+    }
+
 }
