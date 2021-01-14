@@ -1,7 +1,15 @@
 package ru.zont.uinondsb.tools;
 
-import java.util.ArrayList;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import ru.zont.dsbot.core.commands.CommandAdapter;
+import ru.zont.dsbot.core.commands.Commands;
+import ru.zont.dsbot.core.tools.Tools;
 
+import java.util.List;
+
+import static ru.zont.dsbot.core.commands.Commands.parseInput;
 import static ru.zont.dsbot.core.tools.Strings.*;
 
 public class Commons {
@@ -33,5 +41,24 @@ public class Commons {
         return (os.contains("nix")
                 || os.contains("nux")
                 || os.contains("aix"));
+    }
+
+    public static boolean rolesLikePermissions(CommandAdapter adapter, MessageReceivedEvent event, List<String> values) {
+        if (!parseInput(adapter, event)
+                .argEquals(values, 0)) return true;
+        if (!Tools.guildAllowed(event.getGuild())) return false;
+
+        final Member member = event.getMember();
+        return
+                member != null &&
+                        (member.hasPermission(Permission.ADMINISTRATOR) ||
+                        member.hasPermission(Permission.MANAGE_PERMISSIONS));
+    }
+
+    public static Commands.Router rolesLikeRouter(int index, Commands.Router.Case set, Commands.Router.Case rm, Commands.Router.Case get) {
+        return new Commands.Router(index)
+                .addCase(set, "set", "add")
+                .addCase(rm, "rm", "del")
+                .addCase(get, "get", "list");
     }
 }

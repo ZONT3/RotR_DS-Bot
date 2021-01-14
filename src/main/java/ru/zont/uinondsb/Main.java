@@ -31,7 +31,9 @@ public class Main {
     }
 
     private static void registerCommands(ZDSBot bot) {
+        // Нет, я не дегенерад, просто Reflections перестали работать на линуксе какого-то хуя. Помогите мне.
         bot.commandAdapters = new CommandAdapter[]{
+                new Roles(bot),
                 new Cmd(bot),
                 new Do(bot),
                 new Exec(bot),

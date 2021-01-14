@@ -1,8 +1,6 @@
 package ru.zont.uinondsb.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.zont.dsbot.core.ZDSBot;
@@ -10,8 +8,8 @@ import ru.zont.dsbot.core.commands.DescribedException;
 import ru.zont.dsbot.core.commands.LongCommandAdapter;
 import ru.zont.dsbot.core.tools.LOG;
 import ru.zont.dsbot.core.tools.Messages;
-import ru.zont.dsbot.core.tools.Tools;
-import ru.zont.uinondsb.tools.GameMasters;
+import ru.zont.uinondsb.tools.Commons;
+import ru.zont.uinondsb.tools.TGameMasters;
 
 import java.util.*;
 
@@ -35,14 +33,15 @@ public class GMs extends LongCommandAdapter {
             case "set":
             case "add":
                 checkArgs(args, 2);
-                GameMasters.GM gm = set(GameMasters.getId(args.get(1)), args.size() >= 3 ? args.get(2) : null);
+                TGameMasters.GM gm = set(TGameMasters.getId(args.get(1)), args.size() >= 3 ? args.get(2) : null);
                 added(event, gm, args.get(1));
                 break;
             case "rm":
+            case "del":
                 checkArgs(args, 2);
                 try {
-                    GameMasters.removeGm(args.get(1));
-                } catch (GameMasters.NoUpdateException e) {
+                    TGameMasters.removeGm(args.get(1));
+                } catch (TGameMasters.NoUpdateException e) {
                     Messages.printError(event.getChannel(), STR.getString("err.general"), STR.getString("comm.gms.err.no_gm"));
                     return;
                 }
@@ -52,8 +51,8 @@ public class GMs extends LongCommandAdapter {
             case "get":
                 Messages.sendSplit(
                         event.getChannel(),
-                        GameMasters.Msg.gmList(
-                                GameMasters.retrieve(),
+                        TGameMasters.Msg.gmList(
+                                TGameMasters.retrieve(),
                                 input.hasOpt("s"),
                                 input.hasOpt("n"),
                                 input.hasOpt("a"),
@@ -64,7 +63,7 @@ public class GMs extends LongCommandAdapter {
         }
     }
 
-    private void added(@NotNull MessageReceivedEvent event, GameMasters.GM gm, String s) {
+    private void added(@NotNull MessageReceivedEvent event, TGameMasters.GM gm, String s) {
         event.getChannel().sendMessage(new EmbedBuilder()
                 .appendDescription("**")
                 .appendDescription(String.format(STR.getString("comm.gms.set.ok.title"), s))
@@ -85,12 +84,12 @@ public class GMs extends LongCommandAdapter {
                 .build()).queue();
     }
 
-    private GameMasters.GM set(long id, String steamid64) {
-        GameMasters.GM gm = new GameMasters.GM();
+    private TGameMasters.GM set(long id, String steamid64) {
+        TGameMasters.GM gm = new TGameMasters.GM();
         gm.steamid64 = steamid64;
         gm.userid = id;
         try {
-            GameMasters.setGm(gm);
+            TGameMasters.setGm(gm);
         } catch (NoSuchElementException e) {
             throw new DescribedException(
                     STR.getString("comm.gms.err.ids.title"),
@@ -132,15 +131,7 @@ public class GMs extends LongCommandAdapter {
 
     @Override
     public boolean checkPermission(MessageReceivedEvent event) {
-        if (!parseInput(this, event)
-                .argEquals(Arrays.asList("set", "rm", "add", "del"), 0)) return true;
-        if (!Tools.guildAllowed(event.getGuild())) return false;
-
-        final Member member = event.getMember();
-        return
-                member != null &&
-                        (member.hasPermission(Permission.ADMINISTRATOR) ||
-                        member.hasPermission(Permission.MANAGE_PERMISSIONS));
+        return Commons.rolesLikePermissions(this, event, Arrays.asList("set", "rm", "add", "del"));
     }
 
     @Override

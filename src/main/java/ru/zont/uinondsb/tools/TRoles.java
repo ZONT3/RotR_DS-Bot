@@ -1,10 +1,16 @@
 package ru.zont.uinondsb.tools;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import ru.zont.dsbot.core.tools.Strings;
+
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Roles {
+import static ru.zont.dsbot.core.tools.Strings.*;
+
+public class TRoles {
     public static final int ZEUS = 1;
 
     public static HashSet<Integer> fromString(String list) {
@@ -25,5 +31,13 @@ public class Roles {
             sb.append(integer);
         }
         return sb.append(" ]").toString();
+    }
+
+    public static MessageEmbed msgList() {
+        return new EmbedBuilder()
+                .setTitle(STR.getString("comm.roles.get.title"))
+                .setDescription(STR.getString("comm.roles.get"))
+                .setColor(0xd700e7)
+                .build();
     }
 }

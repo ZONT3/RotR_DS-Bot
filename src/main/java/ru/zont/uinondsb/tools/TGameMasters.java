@@ -15,7 +15,7 @@ import java.util.*;
 
 import static ru.zont.dsbot.core.tools.Strings.STR;
 
-public class GameMasters {
+public class TGameMasters {
     public static ArrayList<GM> retrieve() {
         ArrayList<GM> res = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
@@ -26,7 +26,7 @@ public class GameMasters {
                         "ORDER BY p_lastupd"
             );
             while (resultSet.next()) {
-                if (!Roles.fromString(resultSet.getString("p_roles")).contains(Roles.ZEUS))
+                if (!TRoles.fromString(resultSet.getString("p_roles")).contains(TRoles.ZEUS))
                     continue;
                 GM gm = new GM();
                 gm.steamid64 = resultSet.getString("p_guid");
@@ -53,7 +53,7 @@ public class GameMasters {
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"'";
             else lastupd = "NULL";
 
-            st.executeUpdate("UPDATE profiles SET p_roles = '" + Roles.fromSet(roles) + "', " +
+            st.executeUpdate("UPDATE profiles SET p_roles = '" + TRoles.fromSet(roles) + "', " +
                     "p_id_dis = '"+gm.userid+"' WHERE " + cond);
             st.executeUpdate("UPDATE profiles SET p_lastupd = "+lastupd+" " +
                     "WHERE " + cond);
@@ -85,7 +85,7 @@ public class GameMasters {
         gm.p_lastupd = resultSet.getTimestamp("p_lastupd");
         gm.lastlogin = gm.p_lastupd != null ? gm.p_lastupd.toInstant().getEpochSecond() * 1000 : 0;
 
-        return Roles.fromString(resultSet.getString("p_roles"));
+        return TRoles.fromString(resultSet.getString("p_roles"));
     }
 
     public static void removeGm(String id) throws NoUpdateException {
@@ -112,7 +112,7 @@ public class GameMasters {
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"'";
             else lastupd = "NULL";
 
-            st.executeUpdate("UPDATE profiles SET p_roles = '" + Roles.fromSet(roles) +
+            st.executeUpdate("UPDATE profiles SET p_roles = '" + TRoles.fromSet(roles) +
                     "', p_id_dis = " + gm.userid + " " +
                     "WHERE p_guid = " + gm.steamid64);
             st.executeUpdate("UPDATE profiles SET p_lastupd = "+lastupd+" " +
@@ -218,7 +218,7 @@ public class GameMasters {
             EmbedBuilder builder = new EmbedBuilder().setColor(0x9900ff);
             builder.setTitle(STR.getString("comm.gms.get.title"));
             for (GM gm: gms) {
-                Date lastLogin = GameMasters.getLastLogin(gm.steamid64);
+                Date lastLogin = TGameMasters.getLastLogin(gm.steamid64);
                 gm.lastlogin = lastLogin != null ? lastLogin.getTime() : 0;
 
                 if (gm.armaname == null) gm.armaname = STR.getString("comm.gms.get.unknown");
@@ -245,7 +245,7 @@ public class GameMasters {
         }
 
         private static String getAssigned(GM gm) {
-            Timestamp assignedDate = GameMasters.getAssignedDate(gm.steamid64);
+            Timestamp assignedDate = TGameMasters.getAssignedDate(gm.steamid64);
             if (assignedDate == null) return STR.getString("comm.gms.get.unknown");
             return assignedDate.toInstant().atZone(ZoneId.of("GMT+3"))
                     .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
