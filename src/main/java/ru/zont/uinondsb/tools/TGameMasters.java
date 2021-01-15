@@ -1,7 +1,6 @@
 package ru.zont.uinondsb.tools;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import ru.zont.dsbot.core.tools.Configs;
 import ru.zont.dsbot.core.tools.Messages;
@@ -17,7 +16,13 @@ import java.util.*;
 import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class TGameMasters {
+    private static final long INTERVAL = 10000;
+    private static long nextRetrieve = 0;
+    private static ArrayList<GM> cached = null;
+
     public static ArrayList<GM> retrieve() {
+        if (System.currentTimeMillis() < nextRetrieve && cached != null) return new ArrayList<>(cached);
+
         ArrayList<GM> res = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
              Statement st = connection.createStatement()) {
@@ -33,13 +38,17 @@ public class TGameMasters {
                 gm.steamid64 = resultSet.getString("p_guid");
                 gm.userid = resultSet.getLong("p_id_dis");
                 gm.armaname = resultSet.getString("p_name");
+                gm.lastlogin = resultSet.getTimestamp("p_lastupd").getTime();
                 res.add(gm);
             }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return res;
+
+        nextRetrieve = System.currentTimeMillis() + INTERVAL;
+        cached = res;
+        return new ArrayList<>(cached);
     }
 
     public static void setGm(GM gm) {
@@ -124,22 +133,6 @@ public class TGameMasters {
         }
     }
 
-    public static Date getLastLogin(String steamid) {
-        try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
-            Statement st = connection.createStatement()) {
-            ResultSet resultSet = st.executeQuery(
-                    "SELECT p_lastupd FROM profiles WHERE p_guid = '" + steamid + "'"
-            );
-            if (!resultSet.next())
-                return null;
-            Timestamp timestamp = resultSet.getTimestamp(1);
-            if (timestamp == null) return null;
-            return new Date(timestamp.toInstant().getEpochSecond() * 1000);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static Timestamp getAssignedDate(String steamid64) {
         try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
             Statement st = connection.createStatement()) {
@@ -218,14 +211,8 @@ public class TGameMasters {
         private static EmbedBuilder prepareGmList(List<GM> gms) {
             EmbedBuilder builder = new EmbedBuilder().setColor(0x9900ff);
             builder.setTitle(STR.getString("comm.gms.get.title"));
-            for (GM gm: gms) {
-                Date lastLogin = TGameMasters.getLastLogin(gm.steamid64);
-                gm.lastlogin = lastLogin != null ? lastLogin.getTime() : 0;
-
+            for (GM gm: gms)
                 if (gm.armaname == null) gm.armaname = STR.getString("comm.gms.get.unknown");
-                else if (gm.armaname.matches("\".+\""))
-                    gm.armaname = gm.armaname.substring(1, gm.armaname.length() - 1);
-            }
 
             gms.sort(Comparator.comparingLong(ob -> ob.lastlogin));
             return builder;

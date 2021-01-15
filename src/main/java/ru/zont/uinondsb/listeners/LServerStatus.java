@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import ru.zont.dsbot.core.tools.Configs;
 import ru.zont.dsbot.core.tools.Messages;
 import ru.zont.uinondsb.tools.Commons;
 
@@ -100,8 +99,11 @@ public class LServerStatus extends ListenerAdapter {
             Thread thread = new Thread(null, () -> {
                 while (!Thread.interrupted()) {
                     try {
-                        entry.update(message);
+                        synchronized (entry) {
+                            entry.update(message);
+                        }
                     } catch (Exception e) {
+                        e.printStackTrace();
                         message.editMessage(Messages.error(
                                 STR.getString("err.update_fail"),
                                 String.format("Class: %s, Exception: %s: %s",

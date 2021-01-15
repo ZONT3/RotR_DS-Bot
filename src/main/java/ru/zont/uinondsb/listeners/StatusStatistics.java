@@ -4,16 +4,17 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import ru.zont.dsbot.core.tools.Messages;
 import ru.zont.dsbot.core.tools.Strings;
+import ru.zont.uinondsb.tools.TStatus;
 
 public class StatusStatistics extends ServerStatusEntry {
     @Override
     MessageEmbed getInitialMsg() {
-        return Messages.notImplemented(Strings.STR.getString("status.statistics.title"));
-//        return TStatus.Msg.serverStatisticInitial();
+        return TStatus.Msg.serverStatisticInitial();
     }
 
     @Override
     void update(Message entryMessage) {
-//        entryMessage.editMessage().queue(); TODO
+        final TStatus.ServerInfoStruct info = TStatus.retrieveInfo();
+        entryMessage.editMessage(TStatus.Msg.serverStatistic(info.record, info.total)).queue();
     }
 }

@@ -16,9 +16,8 @@ import static ru.zont.dsbot.core.tools.Strings.*;
 public class Commons {
 
     public static String trimNick(String nick) {
-        return nick.replaceAll("[\"']", "").trim()
-                .replaceAll("\\[.+] *", "")
-                .replaceAll("[ .]+.\\...?", "");
+        return nick.replaceAll("\\[.+]", "")
+                .trim();
     }
 
     public static String countPlayers(int count) {

@@ -15,6 +15,7 @@ public class StatusGMs extends ServerStatusEntry {
     @Override
     void update(Message entryMessage) {
         ArrayList<TGameMasters.GM> gms = TGameMasters.retrieve();
-        entryMessage.editMessage(TGameMasters.Msg.gmList(gms)).queue();
+        final MessageEmbed newContent = TGameMasters.Msg.gmList(gms);
+        entryMessage.editMessage(newContent).queue();
     }
 }
