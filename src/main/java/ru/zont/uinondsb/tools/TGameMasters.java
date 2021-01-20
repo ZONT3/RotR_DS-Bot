@@ -67,7 +67,8 @@ public class TGameMasters {
                     "p_id_dis = '"+gm.userid+"' WHERE " + cond);
             st.executeUpdate("UPDATE profiles SET p_lastupd = "+lastupd+" " +
                     "WHERE " + cond);
-            st.executeUpdate("INSERT INTO assign_log (guid, role) VALUES ('" + gm.steamid64 + "', 1)");
+            st.executeUpdate("INSERT INTO assign_log (guid, role, action) " +
+                    "VALUES ('" + gm.steamid64 + "', 1, 'add')");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -127,7 +128,8 @@ public class TGameMasters {
                     "WHERE p_guid = " + gm.steamid64);
             st.executeUpdate("UPDATE profiles SET p_lastupd = "+lastupd+" " +
                     "WHERE " + cond);
-            st.executeUpdate("INSERT INTO assign_log (guid, role) VALUES ('" + gm.steamid64 + "', -1)");
+            st.executeUpdate("INSERT INTO assign_log (guid, role, action) " +
+                    "VALUES ('" + gm.steamid64 + "', 1, 'rm')");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -138,7 +140,7 @@ public class TGameMasters {
             Statement st = connection.createStatement()) {
             final ResultSet resultSet = st.executeQuery(
                     "SELECT timestamp FROM assign_log " +
-                    "WHERE guid = '" + steamid64 + "' AND role = 1 " +
+                    "WHERE guid = '" + steamid64 + "' AND role = 1 AND action != 'rm'" +
                     "ORDER BY id DESC LIMIT 1");
             if (!resultSet.next()) return null;
             return resultSet.getTimestamp("timestamp");

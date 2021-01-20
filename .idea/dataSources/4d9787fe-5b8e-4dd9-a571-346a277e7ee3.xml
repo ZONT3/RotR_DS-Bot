@@ -905,120 +905,124 @@
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="284" parent="277" name="id">
+    <column id="284" parent="277" name="action">
+      <Position>5</Position>
+      <DataType>tinytext|0s</DataType>
+    </column>
+    <index id="285" parent="277" name="id">
       <ColNames>id</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <index id="285" parent="277" name="FK_guid">
+    <index id="286" parent="277" name="FK_guid">
       <ColNames>guid</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="286" parent="277" name="PRIMARY">
+    <key id="287" parent="277" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="287" parent="277" name="id">
+    <key id="288" parent="277" name="id">
       <ColNames>id</ColNames>
       <UnderlyingIndexName>id</UnderlyingIndexName>
     </key>
-    <column id="288" parent="278" name="p_id">
+    <column id="289" parent="278" name="p_id">
       <Position>1</Position>
       <DataType>int unsigned|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="289" parent="278" name="p_name">
+    <column id="290" parent="278" name="p_name">
       <Position>2</Position>
       <DataType>varchar(32)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;&lt;???&gt;&apos;</DefaultExpression>
     </column>
-    <column id="290" parent="278" name="p_id_dis">
+    <column id="291" parent="278" name="p_id_dis">
       <Position>3</Position>
       <DataType>varchar(32)|0s</DataType>
     </column>
-    <column id="291" parent="278" name="p_guid">
+    <column id="292" parent="278" name="p_guid">
       <Position>4</Position>
       <DataType>varchar(64)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="292" parent="278" name="p_equipment">
+    <column id="293" parent="278" name="p_equipment">
       <Position>5</Position>
       <DataType>varchar(20000)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;[]&apos;</DefaultExpression>
     </column>
-    <column id="293" parent="278" name="p_lastloc">
+    <column id="294" parent="278" name="p_lastloc">
       <Position>6</Position>
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;[]&apos;</DefaultExpression>
     </column>
-    <column id="294" parent="278" name="p_lastupd">
+    <column id="295" parent="278" name="p_lastupd">
       <Position>7</Position>
       <DataType>timestamp|0s</DataType>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
-    <column id="295" parent="278" name="p_lastservertime">
+    <column id="296" parent="278" name="p_lastservertime">
       <Position>8</Position>
       <DataType>tinytext|0s</DataType>
     </column>
-    <column id="296" parent="278" name="p_roles">
+    <column id="297" parent="278" name="p_roles">
       <Position>9</Position>
       <DataType>varchar(200)|0s</DataType>
       <DefaultExpression>&apos;[]&apos;</DefaultExpression>
     </column>
-    <column id="297" parent="278" name="p_side">
+    <column id="298" parent="278" name="p_side">
       <Position>10</Position>
       <DataType>varchar(16)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;EMPTY&apos;</DefaultExpression>
     </column>
-    <index id="298" parent="278" name="p_guid">
+    <index id="299" parent="278" name="p_guid">
       <ColNames>p_guid</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="299" parent="278" name="PRIMARY">
+    <key id="300" parent="278" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>p_id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="300" parent="278" name="p_guid">
+    <key id="301" parent="278" name="p_guid">
       <ColNames>p_guid</ColNames>
       <UnderlyingIndexName>p_guid</UnderlyingIndexName>
     </key>
-    <column id="301" parent="279" name="sv_port">
+    <column id="302" parent="279" name="sv_port">
       <Position>1</Position>
       <DataType>smallint unsigned|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="302" parent="279" name="sv_players">
+    <column id="303" parent="279" name="sv_players">
       <Position>2</Position>
-      <DataType>smallint unsigned|0s</DataType>
+      <DataType>mediumtext|0s</DataType>
     </column>
-    <column id="303" parent="279" name="sv_time">
+    <column id="304" parent="279" name="sv_time">
       <Position>3</Position>
-      <DataType>int unsigned|0s</DataType>
+      <DataType>float unsigned|0s</DataType>
     </column>
-    <column id="304" parent="279" name="sv_lastupd">
+    <column id="305" parent="279" name="sv_lastupd">
       <Position>4</Position>
       <DataType>timestamp|0s</DataType>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
-    <index id="305" parent="279" name="sv_port">
+    <index id="306" parent="279" name="sv_port">
       <ColNames>sv_port</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="306" parent="279" name="PRIMARY">
+    <key id="307" parent="279" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>sv_port</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="307" parent="279" name="sv_port">
+    <key id="308" parent="279" name="sv_port">
       <ColNames>sv_port</ColNames>
       <UnderlyingIndexName>sv_port</UnderlyingIndexName>
     </key>

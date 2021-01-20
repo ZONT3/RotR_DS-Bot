@@ -80,7 +80,7 @@ public class TRoles {
         }
     }
 
-    public static void commitRoles(HashSet<Integer> newRoles, String uid, long userid) {
+    public static void commitRoles(HashSet<Integer> newRoles, String uid, long userid, int id, String act) {
         try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
              Statement st = connection.createStatement()) {
             final String roles = fromSet(newRoles);
@@ -89,6 +89,8 @@ public class TRoles {
                     "VALUES ('"+roles+"', '"+userid+"', '"+uid+"') " +
                     "ON DUPLICATE KEY UPDATE " +
                     "p_roles='"+ roles +"', p_id_dis='"+userid+"' ");
+            st.executeUpdate("INSERT INTO assign_log (guid, role, action) " +
+                    "VALUES ('" + uid + "', '"+id+"', '"+act+"')");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -73,7 +73,7 @@ public class Roles extends CommandAdapter {
         int id = parseID(args.get(1));
         final Profile profile = fetchProfile(args.get(2), args.size() >= 4 ? args.get(3) : null);
         profile.roles.add(id);
-        commitRoles(profile.roles, profile.uid, profile.userid);
+        commitRoles(profile.roles, profile.uid, profile.userid, id, "add");
         msgDescribeUpdate(profile, event.getChannel());
     }
 
@@ -95,7 +95,7 @@ public class Roles extends CommandAdapter {
 
         final Profile profile = fetchProfile(userid < 0 ? null : arg + "", steamid);
         profile.roles.remove(id);
-        commitRoles(profile.roles, profile.uid, profile.userid);
+        commitRoles(profile.roles, profile.uid, profile.userid, id, "rm");
         msgDescribeUpdate(profile, event.getChannel());
     }
 
