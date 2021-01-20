@@ -70,4 +70,11 @@ public class Commons {
         return Configs.getID("channel_status");
     }
 
+    public static String assertSteamID(String arg) {
+        if (!arg.matches("7656\\d+"))
+            throw new CommandAdapter.UserInvalidArgumentException(STR.getString("comms.err.invalid_steamid64"));
+        return arg;
+    }
+
+
 }

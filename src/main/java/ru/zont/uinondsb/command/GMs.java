@@ -92,8 +92,8 @@ public class GMs extends LongCommandAdapter {
             TGameMasters.setGm(gm);
         } catch (NoSuchElementException e) {
             throw new DescribedException(
-                    STR.getString("comm.gms.err.ids.title"),
-                    STR.getString("comm.gms.err.ids"));
+                    STR.getString("comms.err.unknown_person.title"),
+                    STR.getString("comms.err.unknown_person"));
         }
         return gm;
     }
@@ -103,7 +103,7 @@ public class GMs extends LongCommandAdapter {
             throw new UserInvalidArgumentException(STR.getString("err.incorrect_args"));
         if (!args.get(1).matches("<@!?\\d+>")
                 && !(args.get(0).equalsIgnoreCase("rm") && args.get(1).matches("\\d+")))
-            throw new UserInvalidArgumentException(STR.getString("comm.gms.err.second_arg"));
+            throw new UserInvalidArgumentException(STR.getString("comms.err.invalid_mention"));
     }
 
     @Override
