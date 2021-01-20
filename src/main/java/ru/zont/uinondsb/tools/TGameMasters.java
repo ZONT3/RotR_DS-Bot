@@ -170,12 +170,12 @@ public class TGameMasters {
         }
 
         public static MessageEmbed gmList(List<GM> gms) {
-            return gmListShort(gms, false, true, true, true);
+            return gmListShort(gms, false, true, true, true, true);
         }
 
         public static MessageEmbed gmListShort(List<GM> gms,
-                                               boolean s, boolean n, boolean a, boolean o) {
-            EmbedBuilder builder = prepareGmList(gms);
+                                               boolean s, boolean n, boolean a, boolean o, boolean hide) {
+            EmbedBuilder builder = prepareGmList(gms, hide);
 
             int splitIndex = gms.size() - 8;
             if (splitIndex > 0) {
@@ -211,9 +211,15 @@ public class TGameMasters {
         }
 
         private static EmbedBuilder prepareGmList(List<GM> gms) {
-            final ArrayList<TRoles.Profile> profiles = TRoles.fetchProfilesWithRoles();
-            profiles.removeIf(profile -> !profile.roles.contains(101));
-            gms.removeIf(gm -> profiles.stream().anyMatch(profile -> profile.uid.equals(gm.steamid64)));
+            return prepareGmList(gms, false);
+        }
+
+        private static EmbedBuilder prepareGmList(List<GM> gms, boolean hide) {
+            if (hide) {
+                final ArrayList<TRoles.Profile> profiles = TRoles.fetchProfilesWithRoles();
+                profiles.removeIf(profile -> !profile.roles.contains(101));
+                gms.removeIf(gm -> profiles.stream().anyMatch(profile -> profile.uid.equals(gm.steamid64)));
+            }
 
             EmbedBuilder builder = new EmbedBuilder().setColor(0x9900ff);
             builder.setTitle(STR.getString("comm.gms.get.title"));

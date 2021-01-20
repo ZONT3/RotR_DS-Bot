@@ -4,12 +4,11 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.zont.dsbot.core.ZDSBot;
 import ru.zont.dsbot.core.commands.CommandAdapter;
+import ru.zont.dsbot.core.commands.ExternalCallable;
 import ru.zont.dsbot.core.commands.NotImplementedException;
 import ru.zont.dsbot.core.tools.Tools;
 import ru.zont.uinondsb.tools.Commons;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 import static ru.zont.dsbot.core.commands.Commands.Input;
@@ -17,20 +16,25 @@ import static ru.zont.dsbot.core.commands.Commands.parseInput;
 import static ru.zont.dsbot.core.tools.Strings.STR;
 import static ru.zont.uinondsb.tools.TRoles.*;
 
-public class Roles extends CommandAdapter {
+public class Roles extends CommandAdapter implements ExternalCallable {
     public Roles(ZDSBot bot) throws RegisterException {
         super(bot);
     }
 
     @Override
-    public void onRequest(@NotNull MessageReceivedEvent event) throws UserInvalidArgumentException {
-        Input input = parseInput(this, event);
+    public void call(Input input) {
+        final MessageReceivedEvent event = input.getEvent();
         Commons.rolesLikeRouter(0, this::set, this::rm, this::get)
                 .setError(STR.getString("comm.gms.err.first_arg"))
                 .addCase((i, e) ->
                         Commons.rolesLikeRouter(1, this::autoSet, this::autoRm, this::autoGet)
-                        .acceptInput(i, e), "auto")
+                                .acceptInput(i, e), "auto")
                 .acceptInput(input, event);
+    }
+
+    @Override
+    public void onRequest(@NotNull MessageReceivedEvent event) throws UserInvalidArgumentException {
+        call(parseInput(this, event));
     }
 
     private int parseID(String arg) {
