@@ -211,6 +211,10 @@ public class TGameMasters {
         }
 
         private static EmbedBuilder prepareGmList(List<GM> gms) {
+            final ArrayList<TRoles.Profile> profiles = TRoles.fetchProfilesWithRoles();
+            profiles.removeIf(profile -> !profile.roles.contains(101));
+            gms.removeIf(gm -> profiles.stream().anyMatch(profile -> profile.uid.equals(gm.steamid64)));
+
             EmbedBuilder builder = new EmbedBuilder().setColor(0x9900ff);
             builder.setTitle(STR.getString("comm.gms.get.title"));
             for (GM gm: gms)
