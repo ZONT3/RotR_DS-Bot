@@ -215,11 +215,7 @@ public class TGameMasters {
         }
 
         private static EmbedBuilder prepareGmList(List<GM> gms, boolean hide) {
-            if (hide) {
-                final ArrayList<TRoles.Profile> profiles = TRoles.fetchProfilesWithRoles();
-                profiles.removeIf(profile -> !profile.roles.contains(101));
-                gms.removeIf(gm -> profiles.stream().anyMatch(profile -> profile.uid.equals(gm.steamid64)));
-            }
+            if (hide) filterHidden(gms);
 
             EmbedBuilder builder = new EmbedBuilder().setColor(0x9900ff);
             builder.setTitle(STR.getString("comm.gms.get.title"));
@@ -272,6 +268,12 @@ public class TGameMasters {
             else if (hr > 11) return  " :zzz:";
             else return "";
         }
+    }
+
+    public static void filterHidden(List<GM> gms) {
+        final ArrayList<TRoles.Profile> profiles = TRoles.fetchProfilesWithRoles();
+        profiles.removeIf(profile -> !profile.roles.contains(101));
+        gms.removeIf(gm -> profiles.stream().anyMatch(profile -> profile.uid.equals(gm.steamid64)));
     }
 
     public static class NoUpdateException extends Exception {

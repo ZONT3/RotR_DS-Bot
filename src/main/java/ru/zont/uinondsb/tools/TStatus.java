@@ -91,6 +91,8 @@ public class TStatus {
             List<TGameMasters.GM> gms = serverInfo.gms;
             if (time >= ONLINE_TIMEOUT) return serverInactive();
 
+            TGameMasters.filterHidden(gms);
+
             EmbedBuilder builder = new EmbedBuilder()
                     .setTitle(STR.getString("status.main.title"))
                     .addField(STR.getString("status.main.online"), Commons.countPlayers(online), true)
