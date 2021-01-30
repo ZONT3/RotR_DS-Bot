@@ -69,7 +69,7 @@ public class TRoles {
                     "p_id, p_name, p_id_dis, p_guid, p_equipment, " +
                     "p_lastloc, p_lastupd, p_lastservertime, p_roles, " +
                     "p_side " +
-                    "FROM profiles WHERE p_id_dis='" + userid + "'");
+                    "FROM profiles WHERE p_guid='" + userid + "'");
             if (!res.next()) return null;
             long disID = res.getLong("p_id_dis");
             String steamid = res.getString("p_guid");
