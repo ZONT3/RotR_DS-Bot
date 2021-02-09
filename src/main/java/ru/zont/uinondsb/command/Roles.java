@@ -157,7 +157,7 @@ public class Roles extends CommandAdapter implements ExternalCallable {
     public String getSynopsis() {
         return "roles add|set|get|list|rm|del|auto ...\n" +
                 "roles add|set <ID> <@who> [steamID64]\n" +
-                "roles rm|del <@who|steamID64> <ID>\n" +
+                "roles rm|del <ID> <@who|steamID64>\n" +
                 "roles get|list [ID|@who]\n" +
                 "roles auto add|set|rm|del|list|get ...\n" +
                 "roles auto add|set <@ds-role|ds-role-id> <ID>\n" +
