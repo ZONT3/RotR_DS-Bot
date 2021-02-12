@@ -155,6 +155,23 @@ public class TRoles {
                 .build()).queue();
     }
 
+    static long getLastLogin(String steamid64) {
+        try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
+             Statement st = connection.createStatement()) {
+            ResultSet resultSet = st.executeQuery("SELECT c_lastupd FROM characters WHERE c_uid='" + steamid64 + "'");
+
+            long time = 0;
+            while (resultSet.next()) {
+                long nt = resultSet.getTimestamp(1).getTime();
+                if (nt > time) time = nt;
+            }
+
+            return time;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static class Profile {
         public final String uid;
         public final long userid;

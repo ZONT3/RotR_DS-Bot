@@ -30,7 +30,7 @@ public class TStatus {
         try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
             Statement st = connection.createStatement()) {
             final ResultSet rs1 = st.executeQuery("SELECT sv_players, sv_time, sv_lastupd " +
-                    "FROM serverinf WHERE sv_port = 2302 LIMIT 1");
+                    "FROM serverinf WHERE sv_port = "+Globals.gamePort+" LIMIT 1");
             if (!rs1.next()) throw new RuntimeException("No result from database");
 
             final ArrayList<String> players = new Gson().fromJson(rs1.getString("sv_players"),

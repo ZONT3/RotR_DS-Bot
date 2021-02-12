@@ -9,6 +9,7 @@ import ru.zont.uinondsb.command.exec.Do;
 import ru.zont.uinondsb.command.exec.Exec;
 import ru.zont.uinondsb.command.exec.Term;
 import ru.zont.uinondsb.command.*;
+import ru.zont.uinondsb.listeners.HCharacters;
 import ru.zont.uinondsb.listeners.LServerStatus;
 
 import javax.security.auth.login.LoginException;
@@ -22,6 +23,8 @@ public class Main {
             setProperty("TA_IDS", "331524458806247426,183600856560566272");
             setProperty("ALLOWED_SERVERS", "795084260083236874,331526118635208716");
             setProperty("channel_status", "799289220275503114");
+            setProperty("channel_charlog", "807823130486898698");
+            setProperty("role_gm", "795084260208934926");
         }});
         Configs.writeDefaultGlobalProps();
 
@@ -50,12 +53,15 @@ public class Main {
         };
         bot.statusHandlers = new LStatusHandler[0];
         bot.getJdaBuilder().addEventListeners((Object[]) bot.statusHandlers);
-        bot.getJdaBuilder().addEventListeners(new LServerStatus());
+        bot.getJdaBuilder().addEventListeners(new LServerStatus(), new HCharacters(bot));
     }
 
     private static void handleArguments(String[] args) throws LoginException, IllegalArgumentException {
         if (args.length < 2) throw new LoginException("Too few arguments");
 
         Globals.dbConnection = args[1];
+
+        if (args.length >= 3 && args[2].matches("\\d+"))
+            Globals.gamePort = Integer.parseInt(args[2]);
     }
 }

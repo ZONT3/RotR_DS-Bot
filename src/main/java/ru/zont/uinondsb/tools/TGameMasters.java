@@ -6,7 +6,6 @@ import ru.zont.dsbot.core.tools.Configs;
 import ru.zont.dsbot.core.tools.Messages;
 import ru.zont.uinondsb.Globals;
 
-import java.sql.Date;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -38,7 +37,7 @@ public class TGameMasters {
                 gm.steamid64 = resultSet.getString("p_guid");
                 gm.userid = resultSet.getLong("p_id_dis");
                 gm.armaname = resultSet.getString("p_name");
-                gm.lastlogin = resultSet.getTimestamp("p_lastupd").getTime();
+                gm.lastlogin = TRoles.getLastLogin(gm.steamid64);
                 res.add(gm);
             }
 
@@ -49,90 +48,6 @@ public class TGameMasters {
         nextRetrieve = System.currentTimeMillis() + INTERVAL;
         cached = res;
         return new ArrayList<>(cached);
-    }
-
-    public static void setGm(GM gm) {
-        String cond = resolveCondition(gm);
-        try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
-             Statement st = connection.createStatement()) {
-            final HashSet<Integer> roles = getRolesUpdProfile(cond, st, gm);
-            roles.add(1);
-
-            String lastupd;
-            if (gm.p_lastupd != null) lastupd = "'"+gm.p_lastupd.toInstant().atOffset(ZoneOffset.UTC)
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"'";
-            else lastupd = "NULL";
-
-            st.executeUpdate("UPDATE profiles SET p_roles = '" + TRoles.fromSet(roles) + "', " +
-                    "p_id_dis = '"+gm.userid+"' WHERE " + cond);
-            st.executeUpdate("UPDATE profiles SET p_lastupd = "+lastupd+" " +
-                    "WHERE " + cond);
-            st.executeUpdate("INSERT INTO assign_log (guid, role, action) " +
-                    "VALUES ('" + gm.steamid64 + "', 1, 'add')");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String resolveCondition(GM gm) {
-        if (gm.userid <= 0) throw new IllegalArgumentException("Discord ID not stated");
-        if (gm.steamid64 != null)
-            return "p_guid = '" + gm.steamid64 + "'";
-        else return "p_id_dis = '" + gm.userid + "'";
-    }
-
-    private static HashSet<Integer> getRolesUpdProfile(String cond, Statement st, GM gm) throws SQLException {
-        final ResultSet resultSet = st.executeQuery(
-                "SELECT p_roles, p_guid, p_name, p_lastupd FROM profiles " +
-                    "WHERE " + cond);
-        if (!resultSet.next()) {
-            if (gm.steamid64 == null) throw new NoSuchElementException();
-            st.executeUpdate("INSERT INTO profiles (p_roles, p_guid, p_id_dis) " +
-                    "VALUES ('[ ]', '"+gm.steamid64+"', '"+gm.userid+"')");
-            return new HashSet<>();
-        }
-
-        gm.armaname = resultSet.getString("p_name");
-        gm.p_lastupd = resultSet.getTimestamp("p_lastupd");
-        gm.lastlogin = gm.p_lastupd != null ? gm.p_lastupd.toInstant().getEpochSecond() * 1000 : 0;
-
-        return TRoles.fromString(resultSet.getString("p_roles"));
-    }
-
-    public static void removeGm(String id) throws NoUpdateException {
-        try (Connection connection = DriverManager.getConnection(Globals.dbConnection);
-            Statement st = connection.createStatement()) {
-
-            String cond;
-            GM gm = new GM();
-            if (id.matches("<@!?\\d+>")) {
-                final long rId = getId(id);
-                cond = "p_id_dis = '" + rId + "'";
-                gm.userid = rId;
-            } else if (id.matches("\\d+")) {
-                cond = "p_guid = '" + id + "'";
-                gm.steamid64 = id;
-            }
-            else throw new IllegalArgumentException("Invalid discord raw mention or steamid64");
-
-            final HashSet<Integer> roles = getRolesUpdProfile(cond, st, gm);
-            roles.remove(1);
-
-            String lastupd;
-            if (gm.p_lastupd != null) lastupd = "'"+gm.p_lastupd.toInstant().atOffset(ZoneOffset.UTC)
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"'";
-            else lastupd = "NULL";
-
-            st.executeUpdate("UPDATE profiles SET p_roles = '" + TRoles.fromSet(roles) +
-                    "', p_id_dis = " + gm.userid + " " +
-                    "WHERE p_guid = " + gm.steamid64);
-            st.executeUpdate("UPDATE profiles SET p_lastupd = "+lastupd+" " +
-                    "WHERE " + cond);
-            st.executeUpdate("INSERT INTO assign_log (guid, role, action) " +
-                    "VALUES ('" + gm.steamid64 + "', 1, 'rm')");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static Timestamp getAssignedDate(String steamid64) {
@@ -149,16 +64,11 @@ public class TGameMasters {
         }
     }
 
-    public static long getId(String raw) {
-        return Long.parseLong(raw.substring(raw.matches("<@\\d+>") ? 2 : 3, raw.length() - 1));
-    }
-
     public static class GM {
         public String steamid64;
         public long userid;
         public String armaname;
         public long lastlogin;
-        public Timestamp p_lastupd;
     }
 
     public static class Msg {
@@ -272,7 +182,7 @@ public class TGameMasters {
 
     public static void filterHidden(List<GM> gms) {
         final ArrayList<TRoles.Profile> profiles = TRoles.fetchProfilesWithRoles();
-        profiles.removeIf(profile -> !profile.roles.contains(101));
+        profiles.removeIf(profile -> !profile.roles.contains(TRoles.ZEUS_HIDDEN));
         gms.removeIf(gm -> profiles.stream().anyMatch(profile -> profile.uid.equals(gm.steamid64)));
     }
 
