@@ -162,7 +162,8 @@ public class TRoles {
 
             long time = 0;
             while (resultSet.next()) {
-                long nt = resultSet.getTimestamp(1).getTime();
+                Timestamp timestamp = resultSet.getTimestamp(1);
+                long nt = timestamp != null ? timestamp.getTime() : 0;
                 if (nt > time) time = nt;
             }
 
